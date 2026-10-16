@@ -42,15 +42,15 @@ Write-Log "SQL credential loaded (user: $($sqlCred.UserName))"
 $shareCred = Get-StoredCredential -Target $SMB_Server
 if (-not $shareCred) { Write-Log "Share credential 'FILESERVER_share' not found" "ERROR"; exit 1 }
 
-try {
-    New-PSDrive -Name Z -PSProvider FileSystem -Root $sharePath -Credential $shareCred -ErrorAction Stop | Out-Null
-    Write-Log "Mapped Z: to $sharePath (user: $($shareCred.UserName))"
-    $sharePath = "Z:\"
-}
-catch {
-    Write-Log "Could not map $sharePath : $($_.Exception.Message)" "ERROR"
-    exit 1
-}
+#try {
+#    New-PSDrive -Name Z -PSProvider FileSystem -Root $sharePath -Persist -Force -Credential $shareCred -ErrorAction Stop | Out-Null
+#    Write-Log "Mapped Z: to $sharePath (user: $($shareCred.UserName))"
+#    $sharePath = "Z:\"
+#}
+#catch {
+#    Write-Log "Could not map $sharePath : $($_.Exception.Message)" "ERROR"
+#    exit 1
+#}
 
 $failed = @()
 
@@ -114,10 +114,6 @@ foreach ($job in $jobs) {
         $failed += $job.Name
     }
 
-    if (Get-PSDrive -Name Z -ErrorAction SilentlyContinue) {
-    Remove-PSDrive -Name Z
-    Write-Log "Unmapped Z:"
-}
 }
 
 # ---------- Result ----------
